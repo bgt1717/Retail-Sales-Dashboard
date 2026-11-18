@@ -79,3 +79,40 @@ fig = px.bar(
 )
 
 st.plotly_chart(fig, use_container_width=True)
+
+# Monthly Revenue Trends
+st.divider()
+
+st.subheader("Monthly Revenue Trends")
+
+# Group transactions by month
+monthly_sales = (
+    filtered_df
+    .groupby(filtered_df["Date"].dt.to_period("M"))["Total Amount"]
+    .sum()
+    .reset_index()
+)
+
+# Convert period back to string for chart labels
+monthly_sales["Date"] = monthly_sales["Date"].astype(str)
+
+# Create line chart
+monthly_fig = px.line(
+    monthly_sales,
+    x="Date",
+    y="Total Amount",
+    title="Monthly Revenue",
+    markers=True,
+    labels={
+        "Date": "Month",
+        "Total Amount": "Revenue ($)"
+    }
+)
+
+monthly_fig.update_layout(
+    xaxis_title="Month",
+    yaxis_title="Revenue ($)",
+    hovermode="x unified"
+)
+
+st.plotly_chart(monthly_fig, use_container_width=True)
