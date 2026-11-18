@@ -124,6 +124,8 @@ st.divider()
 st.header("Customer Demographics")
 
 # Create age groups
+# pd.cut() is a Pandas function that takes numerical data and divides it into specific ranges (called bins).
+# Creates bins for age groups and assigns labels to each bin.
 filtered_df["Age Group"] = pd.cut(
     filtered_df["Age"],
     bins=[0, 25, 35, 45, 55, 100],
@@ -177,4 +179,42 @@ gender_fig = px.pie(
 st.plotly_chart(gender_fig, use_container_width=True)
 
 
+# Payment Method Analysis
+st.divider()
 
+st.header("Payment Method Analysis")
+
+# Group transactions by payment method
+payment_sales = (
+    filtered_df.groupby("Payment Method")
+    .agg(
+        Total_Revenue=("Total Amount", "sum"),
+        Transactions=("Transaction ID", "count"),
+        Average_Sale=("Total Amount", "mean")
+    )
+    .reset_index()
+)
+
+# Revenue by payment method
+payment_fig = px.bar(
+    payment_sales,
+    x="Payment Method",
+    y="Total_Revenue",
+    title="Revenue by Payment Method",
+    labels={
+        "Payment Method": "Payment Method",
+        "Total_Revenue": "Revenue ($)"
+    },
+    text_auto=",.0f"
+)
+
+st.plotly_chart(payment_fig, use_container_width=True)
+
+# Display payment method metrics
+st.subheader("Payment Method Performance")
+
+st.dataframe(
+    payment_sales,
+    use_container_width=True,
+    hide_index=True
+)
