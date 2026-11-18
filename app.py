@@ -116,3 +116,65 @@ monthly_fig.update_layout(
 )
 
 st.plotly_chart(monthly_fig, use_container_width=True)
+
+
+# Customer Demographics Analysis
+st.divider()
+
+st.header("Customer Demographics")
+
+# Create age groups
+filtered_df["Age Group"] = pd.cut(
+    filtered_df["Age"],
+    bins=[0, 25, 35, 45, 55, 100],
+    labels=[
+        "18-25",
+        "26-35",
+        "36-45",
+        "46-55",
+        "56+"
+    ]
+)
+
+# Calculate revenue by age group
+age_sales = (
+    filtered_df.groupby("Age Group", observed=False)["Total Amount"]
+    .sum()
+    .reset_index()
+)
+
+# Create bar chart
+age_fig = px.bar(
+    age_sales,
+    x="Age Group",
+    y="Total Amount",
+    title="Revenue by Customer Age Group",
+    labels={
+        "Age Group": "Customer Age",
+        "Total Amount": "Revenue ($)"
+    },
+    text_auto=",.0f"
+)
+
+st.plotly_chart(age_fig, use_container_width=True)
+
+
+# Revenue by gender
+gender_sales = (
+    filtered_df.groupby("Gender")["Total Amount"]
+    .sum()
+    .reset_index()
+)
+
+gender_fig = px.pie(
+    gender_sales,
+    names="Gender",
+    values="Total Amount",
+    title="Revenue by Customer Gender",
+    hole=0.4
+)
+
+st.plotly_chart(gender_fig, use_container_width=True)
+
+
+
