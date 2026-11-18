@@ -179,14 +179,14 @@ gender_fig = px.pie(
 st.plotly_chart(gender_fig, use_container_width=True)
 
 
-# Payment Method Analysis
+
+# Average Transaction Value by Category
 st.divider()
 
-st.header("Payment Method Analysis")
+st.header("Average Transaction Value")
 
-# Group transactions by payment method
-payment_sales = (
-    filtered_df.groupby("Payment Method")
+category_metrics = (
+    filtered_df.groupby("Product Category")
     .agg(
         Total_Revenue=("Total Amount", "sum"),
         Transactions=("Transaction ID", "count"),
@@ -195,26 +195,24 @@ payment_sales = (
     .reset_index()
 )
 
-# Revenue by payment method
-payment_fig = px.bar(
-    payment_sales,
-    x="Payment Method",
-    y="Total_Revenue",
-    title="Revenue by Payment Method",
+# Create bar chart
+avg_fig = px.bar(
+    category_metrics,
+    x="Product Category",
+    y="Average_Sale",
+    title="Average Transaction Value by Category",
     labels={
-        "Payment Method": "Payment Method",
-        "Total_Revenue": "Revenue ($)"
+        "Product Category": "Category",
+        "Average_Sale": "Average Sale ($)"
     },
-    text_auto=",.0f"
+    text_auto="$.2f"
 )
 
-st.plotly_chart(payment_fig, use_container_width=True)
+st.plotly_chart(avg_fig, use_container_width=True)
 
-# Display payment method metrics
-st.subheader("Payment Method Performance")
-
+# Display metrics
 st.dataframe(
-    payment_sales,
+    category_metrics,
     use_container_width=True,
     hide_index=True
 )
